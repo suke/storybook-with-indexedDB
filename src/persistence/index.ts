@@ -1,0 +1,1 @@
+export { MySubClassedDexie } from "./db";
