@@ -1,7 +1,7 @@
 import type { Preview } from "@storybook/react";
-import { initializeIndexedDB, indexedDBLoader } from './addon-indexed-db'
+import { initializeIndexedDB, indexedDBLoader } from "./addon-indexed-db";
 
-initializeIndexedDB()
+initializeIndexedDB();
 
 const preview: Preview = {
   parameters: {
@@ -13,7 +13,7 @@ const preview: Preview = {
       },
     },
   },
-  loaders: [indexedDBLoader]
+  loaders: [indexedDBLoader],
 };
 
 export default preview;

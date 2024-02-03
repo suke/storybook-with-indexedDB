@@ -1,40 +1,40 @@
-import { MySubClassedDexie } from '../../src/persistence'
-import { Tables } from '../../src/types/tables'
+import { MySubClassedDexie } from "../../src/persistence";
+import { Tables } from "../../src/types/tables";
 
-let db: MySubClassedDexie | null
+let db: MySubClassedDexie | null;
 
 export type IndexedDBParameters = {
-  idb?: Partial<Tables>
-}
+  idb?: Partial<Tables>;
+};
 
 type Context = {
-  parameters: IndexedDBParameters
-}
+  parameters: IndexedDBParameters;
+};
 
 export const initializeIndexedDB = () => {
   try {
-    db = new MySubClassedDexie()
+    db = new MySubClassedDexie();
 
-    window.addEventListener('beforeunload', e => {
-      db!.delete()
-    })
+    window.addEventListener("beforeunload", (e) => {
+      db!.delete();
+    });
   } catch {
-    console.error('Could not create database')
+    console.error("Could not create database");
   }
-}
+};
 
 export const indexedDBLoader = async ({ parameters }: Context) => {
-  const { idb = {} }  = parameters
+const { idb = {} } = parameters;
 
-  if(!db) {
-    return {}
+  if (!db) {
+    return {};
   }
 
-  await db.clear()
+  await db.clear();
 
-  for (const [tableName, values] of  Object.entries(idb)) {
-    await db.table(tableName).bulkPut(values)
+  for (const [tableName, values] of Object.entries(idb)) {
+    await db.table(tableName).bulkPut(values);
   }
 
-  return {}
-}
+  return {};
+};
