@@ -1,1 +1,1 @@
-export { MySubClassedDexie } from "./db";
+export { getDB, initializeDB } from "./db";

@@ -1,7 +1,5 @@
-import { MySubClassedDexie } from "../../src/persistence";
+import { initializeDB, getDB } from "../../src/persistence/db";
 import { Tables } from "../../src/types/tables";
-
-let db: MySubClassedDexie | null;
 
 export type IndexedDBParameters = {
   idb?: Partial<Tables>;
@@ -13,28 +11,36 @@ type Context = {
 
 export const initializeIndexedDB = () => {
   try {
-    db = new MySubClassedDexie();
+    initializeDB("db-for-storybook");
+    const db = getDB();
 
     window.addEventListener("beforeunload", (e) => {
-      db!.delete();
+      db.delete();
     });
   } catch {
     console.error("Could not create database");
   }
 };
 
-export const indexedDBLoader = async ({ parameters }: Context) => {
-const { idb = {} } = parameters;
+let currentIdbSettings: Partial<Tables> = {};
 
-  if (!db) {
+export const indexedDBLoader = async ({ parameters }: Context) => {
+  const { idb = {} } = parameters;
+  const db = getDB();
+
+  const previousIdbSettings = currentIdbSettings;
+  currentIdbSettings = idb;
+
+  if (currentIdbSettings === previousIdbSettings) {
     return {};
   }
 
-  await db.clear();
-
-  for (const [tableName, values] of Object.entries(idb)) {
-    await db.table(tableName).bulkPut(values);
-  }
+  await Promise.all(db.tables.map((table) => table.clear()));
+  await Promise.all(
+    Object.entries(idb).map(([tableName, values]) =>
+      db.table(tableName).bulkPut(values)
+    )
+  );
 
   return {};
 };

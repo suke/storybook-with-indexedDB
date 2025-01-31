@@ -1,3 +1,3 @@
-import { db } from "./db";
+import { getDB } from "./db";
 
-export const getUsers = () => db.users.toArray();
+export const getUsers = () => getDB().users.toArray();

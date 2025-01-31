@@ -1,13 +1,12 @@
 import Dexie, { Table } from "dexie";
 import { User } from "../types/user";
 import { schema } from "./schema";
-import { DB_NAME } from "../constants/dbName";
 
-export class MySubClassedDexie extends Dexie {
+export class MyDB extends Dexie {
   users!: Table<User>;
 
-  constructor() {
-    super(DB_NAME);
+  constructor(dbName: string) {
+    super(dbName);
     this.migrate();
   }
 
@@ -20,4 +19,16 @@ export class MySubClassedDexie extends Dexie {
   }
 }
 
-export const db = new MySubClassedDexie();
+export let db: MyDB;
+
+export function initializeDB(dbName: string) {
+  db = new MyDB(dbName);
+}
+
+export function getDB() {
+  if (!db) {
+    throw new Error("Database not initialized");
+  }
+
+  return db;
+}
